@@ -2,6 +2,7 @@ import requests
 
 from .models import Date, Book, Author
 
+
 def api_data_scraper():
     r = requests.get('https://www.googleapis.com/books/v1/volumes?q=Hobbit')
     r = r.json().get('items')
