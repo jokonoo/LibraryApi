@@ -8,6 +8,7 @@ class Date(models.Model):
 
 
 class Book(models.Model):
+    id = models.CharField(max_length=200, primary_key=True, verbose_name='ID')
     title = models.CharField(max_length=200, blank=True)
     pub_date = models.ForeignKey(Date, on_delete=models.DO_NOTHING)
     ISBN_10 = models.IntegerField(blank=True, null=True)
