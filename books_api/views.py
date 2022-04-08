@@ -3,6 +3,7 @@ from datetime import date
 from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.http import HttpRequest, HttpResponse
 
 from .api_scraper import api_data_scraper
 from .models import Book, Date, Author
@@ -36,12 +37,12 @@ def main_page_view(request):
     return render(request, 'books_api/main.html', context)
 
 
-def detail_book_view(request, identifier):
+def detail_book_view(request: HttpRequest, identifier: str) -> HttpResponse:
     book = get_object_or_404(Book, id=identifier)
     return render(request, 'books_api/book.html', {'book': book})
 
 
-def edit_book_view(request, identifier):
+def edit_book_view(request, identifier: str):
     book = get_object_or_404(Book, id=identifier)
     if request.method == 'POST':
         form_b = BookEditForm(request.POST, instance=book)
@@ -55,7 +56,16 @@ def edit_book_view(request, identifier):
     form_b = BookEditForm(instance=book)
     form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
     form_a = AuthorEditForm(instance=book)
-    return render(request, 'books_api/test_edit.html', {'form_b': form_b, 'form_d': form_d, 'form_a': form_a})
+    return render(request, 'books_api/test_edit.html',
+                  {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
+
+
+def create_book_view(request):
+    form_b = BookEditForm()
+    form_d = DateEditForm()
+    form_a = AuthorEditForm()
+    return render(request, 'books_api/book_add.html',
+                  {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
 
 
 def scraper(request):

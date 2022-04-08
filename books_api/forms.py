@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book, Date, Author
+from .models import Book, Date
 
 
 class BookEditForm(forms.ModelForm):
@@ -27,7 +27,7 @@ class AuthorEditForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ['authors']
-        widgets = {'authors': forms.CheckboxSelectMultiple(attrs={'class': 'custom-select'})}
+        widgets = {'authors': forms.SelectMultiple(attrs={'class': 'custom-select'})}
 
 
 class DateEditForm(forms.ModelForm):
