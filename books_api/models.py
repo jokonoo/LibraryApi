@@ -13,13 +13,18 @@ class Date(models.Model):
         self.searching_date = date(self.year, self.month or 1, self.day or 1)
         super().save(*args, **kwargs)
 
-    def get_full_date(self):
+    def get_full_date(self, separator='-'):
         if self.month and self.day:
             return f'{self.year}-{self.month}-{self.day}'
         elif self.month:
             return f'{self.year}-{self.month}'
         else:
             return f'{self.year}'
+
+        return_date = str(self.year)
+        return_date += separator + str(self.month) if self.month else return_date
+        return_date += separator + st(self.day) if self.day else return_date
+        return return_date
 
     def __str__(self):
         return self.get_full_date()

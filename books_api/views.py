@@ -17,15 +17,16 @@ def main_page_view(request):
                     q |= Q(language__exact=language)
             else:
                 q &= Q(language__exact=lang[0])
-        if params.get('date_from') and params.get('date_to'):
-            date_from = list(map(int, params.get('date_from').split('-')))
-            date_to = list(map(int, params.get('date_to').split('-')))
+        date_from, date_to = params.get('date_from'), params.get('date_to')
+        if date_from and date_to:
+            date_from = list(map(int, date_from.split('-')))
+            date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
-        elif params.get('date_from'):
-            date_from = list(map(int, params.get('date_from').split('-')))
+        elif date_from:
+            date_from = list(map(int, date_from.split('-')))
             q &= Q(pub_date__searching_date__gte=date(*date_from))
-        elif params.get('date_to'):
-            date_to = list(map(int, params.get('date_to').split('-')))
+        elif date_to:
+            date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__lte=date(*date_to))
         books = Book.objects.filter(q).distinct()
         context = {'books': books, 'q': params, 'languages': Book.get_languages_list()}
