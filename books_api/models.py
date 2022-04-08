@@ -21,10 +21,10 @@ class Date(models.Model):
         else:
             return f'{self.year}'
 
-        return_date = str(self.year)
-        return_date += separator + str(self.month) if self.month else return_date
-        return_date += separator + st(self.day) if self.day else return_date
-        return return_date
+        #return_date = str(self.year)
+        #return_date += separator + str(self.month) if self.month else return_date
+        #return_date += separator + st(self.day) if self.day else return_date
+        #return return_date
 
     def __str__(self):
         return self.get_full_date()

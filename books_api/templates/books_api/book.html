@@ -7,11 +7,28 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">{{book.title}}</h5>
-            <p class="card-text">
-                {% with authors=book.get_authors_names %}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    {% with authors=book.get_authors_names %}
                     Authors: {{ authors|join:", " }}
-                {% endwith %}
-            </p>
+                    {% endwith %}
+                </li>
+                <li class="list-group-item">
+                    Pages: {{book.pages_number|default:"Missing data"}}
+                </li>
+                <li class="list-group-item">
+                    Language: {{book.language|upper|default:"Missing data"}}
+                </li>
+                <li class="list-group-item">
+                    ISBN 10: {{book.ISBN_10|default:"Missing data"}}
+                </li>
+                <li class="list-group-item">
+                    ISBN 13: {{book.ISBN_13|default:"Missing data"}}
+                </li>
+                <li class="list-group-item">
+                    Image URL: {{book.image|default:"Missing data"}}
+                </li>
+            </ul>
             <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
         <div class="card-footer text-muted">

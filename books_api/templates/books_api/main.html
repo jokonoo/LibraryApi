@@ -59,7 +59,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <input class="form-control me-2" type="search" placeholder="Search title, author or language"
+                <input class="form-control me-2" type="search" placeholder="Search title or author"
                        aria-label="Search" name="q">
                 <input type="date" name="date_from">
                 <input type="date" name="date_to">
@@ -82,27 +82,27 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <a href="{{book.get_absolute_url}}"><h5 class="card-title">{{book.title}}</h5></a>
+                        <h5 class="card-title">{{book.title}}</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
                                 {% with authors=book.get_authors_names %}
-                                Authors: {{ authors|join:", " }}
+                                <strong>Authors:</strong> {{ authors|join:", " }}
                                 {% endwith %}
                             </li>
                             <li class="list-group-item">
-                                Pages: {{book.pages_number|default:"Missing data"}}
+                                <strong>Pages:</strong> {{book.pages_number|default:"Missing data"}}
                             </li>
                             <li class="list-group-item">
-                                Language: {{book.language|default:"Missing data"}}
+                                <strong>Language:</strong> {{book.language|upper|default:"Missing data"}}
                             </li>
                             <li class="list-group-item">
-                                ISBN 10: {{book.ISBN_10|default:"Missing data"}}
+                                <strong>ISBN 10:</strong> {{book.ISBN_10|default:"Missing data"}}
                             </li>
                             <li class="list-group-item">
-                                ISBN 13: {{book.ISBN_13|default:"Missing data"}}
+                                <strong>ISBN 13:</strong> {{book.ISBN_13|default:"Missing data"}}
                             </li>
                             <li class="list-group-item">
-                                Image URL: {{book.image|default:"Missing data"}}
+                                <strong>Image URL:</strong> {{book.image|default:"Missing data"}}
                             </li>
                         </ul>
                         <p class="card-text">
@@ -112,6 +112,8 @@
                                 {% endwith %}
                             </small>
                         </p>
+                        <a class="btn btn-primary" href="{{book.get_absolute_url}}" role="button">Details</a>
+                        <a class="btn btn-primary" href="{% url 'edit_book_view' book.id %}" role="button">Edit</a>
                     </div>
                 </div>
             </div>

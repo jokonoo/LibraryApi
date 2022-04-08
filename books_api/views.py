@@ -5,7 +5,8 @@ from django.http import HttpResponseRedirect
 from django.db.models import Q
 
 from .api_scraper import api_data_scraper
-from .models import Book
+from .models import Book, Date
+from .forms import BookEditForm, DateEditForm
 
 
 def main_page_view(request):
@@ -38,6 +39,13 @@ def main_page_view(request):
 def detail_book_view(request, identifier):
     book = get_object_or_404(Book, id=identifier)
     return render(request, 'books_api/book.html', {'book': book})
+
+
+def edit_book_view(request, identifier):
+    book = get_object_or_404(Book, id=identifier)
+    form_b = BookEditForm(instance=book)
+    form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
+    return render(request, 'books_api/test_edit.html', {'form_b': form_b, 'form_d': form_d})
 
 
 def scraper(request):
