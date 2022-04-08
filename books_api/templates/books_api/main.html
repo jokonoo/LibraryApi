@@ -40,19 +40,29 @@
                     <a class="nav-link disabled">Disabled</a>
                 </li>
             </ul>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                    Filter
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-            </div>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" method="POST" action="{% url 'books_view' %}">
+                {% csrf_token %}
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Language
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {% for language in languages %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{language}}" id="flexCheckDefault"
+                                   name="language">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                {{language|upper}}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <input class="form-control me-2" type="search" placeholder="Search title, author or language"
+                       aria-label="Search" name="q">
+                <input type="date" name="date_from">
+                <input type="date" name="date_to">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
@@ -101,6 +111,12 @@
     </div>
 </div>
 {% endblock body %}
+{% if date_from %}
+{{date_from}}
+{% endif %}
+{% if date_to %}
+{{date_to}}
+{% endif %}
 {% if q %}
 {{q}}
 {% endif %}

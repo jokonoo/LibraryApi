@@ -1,15 +1,36 @@
+from datetime import date
+
 from django.shortcuts import render, reverse, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 
 from .api_scraper import api_data_scraper
 from .models import Book
 
 
 def main_page_view(request):
-    if params := request.GET:
-        context = {'books': Book.objects.all(), 'q': params}
+    if params := request.POST:
+        q = Q(title__icontains=params.get('q')) | Q(authors__name__icontains=params.get('q'))
+        if lang := request.POST.getlist('language'):
+            if len(lang) > 1:
+                for language in lang:
+                    q |= Q(language__exact=language)
+            else:
+                q &= Q(language__exact=lang[0])
+        if params.get('date_from') and params.get('date_to'):
+            date_from = list(map(int, params.get('date_from').split('-')))
+            date_to = list(map(int, params.get('date_to').split('-')))
+            q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
+        elif params.get('date_from'):
+            date_from = list(map(int, params.get('date_from').split('-')))
+            q &= Q(pub_date__searching_date__gte=date(*date_from))
+        elif params.get('date_to'):
+            date_to = list(map(int, params.get('date_to').split('-')))
+            q &= Q(pub_date__searching_date__lte=date(*date_to))
+        books = Book.objects.filter(q).distinct()
+        context = {'books': books, 'q': params, 'languages': Book.get_languages_list()}
     else:
-        context = {'books': Book.objects.all()}
+        context = {'books': Book.objects.all(), 'languages': Book.get_languages_list()}
     return render(request, 'books_api/main.html', context)
 
 

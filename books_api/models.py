@@ -1,11 +1,17 @@
 from django.db import models
 from django.shortcuts import reverse
+from datetime import date
 
 
 class Date(models.Model):
     year = models.IntegerField()
     month = models.IntegerField(blank=True, null=True)
     day = models.IntegerField(blank=True, null=True)
+    searching_date = models.DateField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.searching_date = date(self.year, self.month or 1, self.day or 1)
+        super().save(*args, **kwargs)
 
     def get_full_date(self):
         if self.month and self.day:
@@ -38,6 +44,11 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse('books_detail_view', kwargs={'identifier': self.id})
+
+    @staticmethod
+    def get_languages_list():
+        languages = list(Book.objects.values_list('language').distinct())
+        return [language[0] for language in languages]
 
 
 class Author(models.Model):
