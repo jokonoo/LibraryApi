@@ -1,12 +1,18 @@
+from datetime import date
+
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import reverse
-from datetime import date
 
 
 class Date(models.Model):
     year = models.IntegerField()
-    month = models.IntegerField(blank=True, null=True)
-    day = models.IntegerField(blank=True, null=True)
+    month = models.IntegerField(blank=True, null=True, validators=[
+            MaxValueValidator(12),
+            MinValueValidator(1)])
+    day = models.IntegerField(blank=True, null=True, validators=[
+            MaxValueValidator(31),
+            MinValueValidator(1)])
     searching_date = models.DateField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
@@ -30,6 +36,13 @@ class Date(models.Model):
         return self.get_full_date()
 
 
+class Author(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 class Book(models.Model):
     id = models.CharField(max_length=200, primary_key=True, verbose_name='ID')
     title = models.CharField(max_length=200, blank=True)
@@ -39,6 +52,7 @@ class Book(models.Model):
     pages_number = models.IntegerField(blank=True, null=True)
     image = models.URLField(max_length=250, blank=True, null=True)
     language = models.CharField(max_length=100, blank=True, null=True)
+    authors = models.ManyToManyField(Author, related_name='books')
 
     def __str__(self):
         return f'ID:{self.id}, Title:{self.title}'
@@ -54,12 +68,4 @@ class Book(models.Model):
     def get_languages_list():
         languages = list(Book.objects.values_list('language').distinct())
         return [language[0] for language in languages]
-
-
-class Author(models.Model):
-    name = models.CharField(max_length=200)
-    books = models.ManyToManyField(Book, related_name='authors')
-
-    def __str__(self):
-        return f'{self.name}'
 

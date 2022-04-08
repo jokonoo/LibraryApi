@@ -1,12 +1,12 @@
 from datetime import date
 
-from django.shortcuts import render, reverse, get_object_or_404
+from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 
 from .api_scraper import api_data_scraper
-from .models import Book, Date
-from .forms import BookEditForm, DateEditForm
+from .models import Book, Date, Author
+from .forms import BookEditForm, DateEditForm, AuthorEditForm
 
 
 def main_page_view(request):
@@ -43,9 +43,19 @@ def detail_book_view(request, identifier):
 
 def edit_book_view(request, identifier):
     book = get_object_or_404(Book, id=identifier)
+    if request.method == 'POST':
+        form_b = BookEditForm(request.POST, instance=book)
+        form_d = DateEditForm(request.POST, instance=Date.objects.filter(book__id__exact=book.id)[0])
+        form_a = AuthorEditForm(request.POST, instance=book)
+        if form_b.is_valid() and form_d.is_valid() and form_a.is_valid():
+            form_b.save()
+            form_d.save()
+            form_a.save()
+            return redirect('books_view')
     form_b = BookEditForm(instance=book)
     form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
-    return render(request, 'books_api/test_edit.html', {'form_b': form_b, 'form_d': form_d})
+    form_a = AuthorEditForm(instance=book)
+    return render(request, 'books_api/test_edit.html', {'form_b': form_b, 'form_d': form_d, 'form_a': form_a})
 
 
 def scraper(request):

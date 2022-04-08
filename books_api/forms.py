@@ -1,11 +1,11 @@
 from django import forms
-from .models import Book, Date
+from .models import Book, Date, Author
 
 
 class BookEditForm(forms.ModelForm):
     class Meta:
         model = Book
-        exclude = ('pub_date', 'id',)
+        fields = ['title', 'ISBN_10', 'ISBN_13', 'pages_number', 'image', 'language']
         widgets = {
             'title': forms.TextInput(
                 attrs={'type': 'text', 'class': 'form-control', 'id': 'title'}),
@@ -19,12 +19,29 @@ class BookEditForm(forms.ModelForm):
             'image': forms.URLInput(
                 attrs={'type': 'url', 'class': 'form-control', 'id': 'image'}),
             'language': forms.TextInput(
-                attrs={'type': 'text', 'class': 'form-control', 'id': 'language'})
-
+                attrs={'type': 'text', 'class': 'form-control', 'id': 'language'}),
         }
+
+
+class AuthorEditForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['authors']
+        widgets = {'authors': forms.CheckboxSelectMultiple(attrs={'class': 'custom-select'})}
 
 
 class DateEditForm(forms.ModelForm):
     class Meta:
         model = Date
         exclude = ('searching_date',)
+        widgets = {
+            'year': forms.NumberInput(
+                attrs={'type': 'number', 'class': 'form-control', 'id': 'year',
+                       'placeholder': 'Enter year'}),
+            'month': forms.NumberInput(
+                attrs={'type': 'number', 'class': 'form-control', 'id': 'month',
+                       'placeholder': 'Enter month'}),
+            'day': forms.NumberInput(
+                attrs={'type': 'number', 'class': 'form-control', 'id': 'day',
+                       'placeholder': 'Enter day'})
+        }

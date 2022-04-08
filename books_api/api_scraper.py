@@ -15,7 +15,10 @@ def api_data_scraper():
                 'pages_number': volume_data.get('pageCount'),
                 'language': volume_data.get('language')
             })
+
         if authors := volume_data.get('authors'):
+            if not created:
+                book_obj.authors.clear()
             for author in authors:
                 author_obj, created = Author.objects.get_or_create(name=author)
                 book_obj.authors.add(author_obj)

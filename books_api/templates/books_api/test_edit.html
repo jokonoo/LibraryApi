@@ -1,6 +1,5 @@
 {% extends 'books_api/main.html' %}
 {% block body %}
-{% csrf_token %}
 <div class="container">
     <div class="card text-center">
         <div class="card-header">
@@ -8,13 +7,24 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">Edit book object</h5>
-            <form>
+            <form method="POST">
+                {% csrf_token %}
                 {% for field in form_b %}
                 <div class="form-group">
                     {{field.errors}}
                     {{field.label_tag}} {{field}}
                 </div>
                 {% endfor %}
+                {{form_a}}
+                <div class="container">
+                    {% for field in form_d %}
+                    <div class="form-group">
+                        {{field.errors}}
+                        {{field.label_tag}} {{field}}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit">KLIKNIJ TUTAJ</button>
             </form>
         </div>
         <div class="card-footer text-muted">
