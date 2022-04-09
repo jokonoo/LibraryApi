@@ -20,7 +20,7 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'create_book_view' %}">Add book</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link active" aria-current="page" href="#">Import Books</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -114,6 +114,7 @@
                         </p>
                         <a class="btn btn-primary" href="{{book.get_absolute_url}}" role="button">Details</a>
                         <a class="btn btn-primary" href="{% url 'edit_book_view' book.id %}" role="button">Edit</a>
+                        <a class="btn btn-danger" href="{% url 'book_delete' book.id %}" role="button">Remove</a>
                     </div>
                 </div>
             </div>

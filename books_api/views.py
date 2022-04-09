@@ -4,10 +4,18 @@ from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
 
 from .api_scraper import api_data_scraper
 from .models import Book, Date, Author
-from .forms import BookEditForm, DateEditForm, AuthorEditForm
+from .forms import BookEditForm, BookCreateForm, DateEditForm, AuthorEditForm
+
+
+class BookRemoveView(DeleteView):
+    model = Book
+    template_name = 'books_api/book_delete.html'
+    success_url = reverse_lazy('books_view')
 
 
 def main_page_view(request):
@@ -53,6 +61,8 @@ def edit_book_view(request, identifier: str):
             form_d.save()
             form_a.save()
             return redirect('books_view')
+        return render(request, 'books_api/test_edit.html',
+                      {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
     form_b = BookEditForm(instance=book)
     form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
     form_a = AuthorEditForm(instance=book)
@@ -61,9 +71,23 @@ def edit_book_view(request, identifier: str):
 
 
 def create_book_view(request):
-    form_b = BookEditForm()
+    form_b = BookCreateForm()
     form_d = DateEditForm()
     form_a = AuthorEditForm()
+    if request.method == 'POST':
+        form_b = BookCreateForm(request.POST)
+        form_d = DateEditForm(request.POST)
+        form_a = AuthorEditForm(request.POST)
+        if form_b.is_valid() and form_d.is_valid() and form_a.is_valid():
+            date_object = form_d.save()
+            book_object = form_b.save()
+            book_object.pub_date = date_object
+            for pk_value in request.POST.getlist('authors'):
+                book_object.authors.add(Author.objects.get(pk=int(pk_value)))
+            book_object.save()
+        return render(request, 'books_api/book_add.html',
+                      {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
+
     return render(request, 'books_api/book_add.html',
                   {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
 

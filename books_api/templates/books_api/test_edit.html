@@ -15,9 +15,13 @@
                     {{field.label_tag}} {{field}}
                 </div>
                 {% endfor %}
-                {{form_a}}
+                <div class="form-select">
+                    {{form_a}}
+                </div>
                 <div class="form-group">
-                    <input type="text" class="form-group">
+                    <label for="authors-input" class="form-label">Input custom authors:</label>
+                    <input type="text" class="form-control" id="authors-input" aria-describedby="authorInputHelp">
+                    <small id="authorInputHelp" class="form-text text-muted">Input author names after comas</small>
                 </div>
                 {% for field in form_d %}
                 <div class="form-group">
@@ -25,7 +29,9 @@
                     {{field.label_tag}} {{field}}
                     {% endfor %}
                 </div>
-                <button type="submit">KLIKNIJ TUTAJ</button>
+                <div>
+                    <button class="btn btn-primary" type="submit">Create Book</button>
+                </div>
             </form>
         </div>
     </div>

@@ -1,0 +1,17 @@
+{% extends 'books_api/main.html' %}
+{% block body %}
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Book object deletion</h5>
+                <p class="card-text">Are you sure you want to delete Book object with ID: <strong>{{object.pk}}</strong>
+                    ?</p>
+                <button class="btn btn-danger" type="submit">Delete</button>
+                <a class="btn btn-primary" href="{% url 'books_view' %}" role="button">Back</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock body %}

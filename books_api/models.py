@@ -6,7 +6,7 @@ from django.shortcuts import reverse
 
 
 class Date(models.Model):
-    year = models.IntegerField()
+    year = models.PositiveIntegerField()
     month = models.IntegerField(blank=True, null=True, validators=[
             MaxValueValidator(12),
             MinValueValidator(1)])
