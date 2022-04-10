@@ -1,0 +1,29 @@
+{% extends 'books_api/main.html' %}
+{% block body %}
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+
+            <label for="queryInput" class="form-label"><strong>Input your query</strong></label>
+            <input type="text" class="form-control" id="queryInput" name="query" aria-describedby="queryInputHelp">
+            <div id="queryInputHelp" class="form-text">Search for volumes that contain this text string</div>
+
+            <label for="queryInTitle" class="form-label"><strong>Input Intitle word</strong></label>
+            <input type="text" class="form-control" id="queryInTitle" name="intitle" aria-describedby="queryTitleHelp">
+            <div id="queryTitleHelp" class="form-text">Returns results where the text following this keyword is found in
+                the title
+            </div>
+
+            <label for="queryInAuthor" class="form-label"><strong>Input Inauthor word</strong></label>
+            <input type="text" class="form-control" id="queryInAuthor" name="inauthor"
+                   aria-describedby="queryAuthorHelp">
+            <div id="queryAuthorHelp" class="form-text">Returns results where the text following this keyword is found
+                in
+                the author
+            </div>
+            <button class="btn btn-primary" type="submit">Import</button>
+        </div>
+    </form>
+</div>
+{% endblock body %}

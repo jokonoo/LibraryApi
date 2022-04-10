@@ -20,7 +20,8 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'create_book_view' %}">Add book</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Import Books</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'book_import_form_view' %}">Import
+                        Books</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -70,7 +71,7 @@
 </nav>
 {% block body %}
 <div class="container">
-    <a class="btn btn-primary" href="{% url 'scraper' %}" role="button">Import books</a>
+    {% comment %}<a class="btn btn-primary" href="{% url 'book_import_view' %}" role="button">Import books</a> {% endcomment %}
 </div>
 <div class="container">
     <div class="row row-cols-2">
@@ -78,7 +79,8 @@
         <div class="card mb-3" style="max-width: 540px;">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="..." class="img-fluid rounded-start" alt="...">
+                    <img src={{book.image|default:"https://e7.pngegg.com/pngimages/702/99/png-clipart-book-review-online-book-e-book-book-thumbnail.png"}}
+                         class="img-fluid rounded-start" alt="...">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
@@ -114,7 +116,7 @@
                         </p>
                         <a class="btn btn-primary" href="{{book.get_absolute_url}}" role="button">Details</a>
                         <a class="btn btn-primary" href="{% url 'edit_book_view' book.id %}" role="button">Edit</a>
-                        <a class="btn btn-danger" href="{% url 'book_delete' book.id %}" role="button">Remove</a>
+                        <a class="btn btn-danger" href="{% url 'book_delete_view' book.id %}" role="button">Remove</a>
                     </div>
                 </div>
             </div>

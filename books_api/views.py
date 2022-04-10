@@ -92,6 +92,13 @@ def create_book_view(request):
                   {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
 
 
+def books_import_form_view(request):
+    if request.method == "POST":
+        print(request.POST)
+        
+    return render(request, 'books_api/book_import.html')
+
+
 def scraper(request):
     api_data_scraper()
     return HttpResponseRedirect(reverse('books_view'))
