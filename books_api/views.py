@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from rest_framework import generics
+from rest_framework import filters as rest_filters
 from django_filters import rest_framework as filters
 
 from .serializers import BooksSerializer
@@ -20,8 +21,9 @@ from .filters import BookFilter
 class BooksView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BooksSerializer
-    filter_backends = [filters.DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend, rest_filters.SearchFilter]
     filterset_class = BookFilter
+    search_fields = ['title', 'authors__name', 'language']
 
 
 class DetailedBookView(generics.RetrieveAPIView):
