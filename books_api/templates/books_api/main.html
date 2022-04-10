@@ -71,9 +71,6 @@
 </nav>
 {% block body %}
 <div class="container">
-    {% comment %}<a class="btn btn-primary" href="{% url 'book_import_view' %}" role="button">Import books</a> {% endcomment %}
-</div>
-<div class="container">
     <div class="row row-cols-2">
         {% for book in books %}
         <div class="card mb-3" style="max-width: 540px;">

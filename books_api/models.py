@@ -52,7 +52,7 @@ class Book(models.Model):
     pages_number = models.IntegerField(blank=True, null=True)
     image = models.URLField(max_length=250, blank=True, null=True)
     language = models.CharField(max_length=100, blank=True, null=True)
-    authors = models.ManyToManyField(Author, related_name='books')
+    authors = models.ManyToManyField(Author, related_name='books', blank=True)
 
     def __str__(self):
         return f'ID:{self.id}, Title:{self.title}'
