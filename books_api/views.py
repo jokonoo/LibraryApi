@@ -7,10 +7,23 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
+from rest_framework import generics
 
+from .serializers import BooksSerializer
 from .api_scraper import api_data_scraper
 from .models import Book, Date, Author
 from .forms import BookEditForm, BookCreateForm, DateEditForm, AuthorEditForm
+
+
+class BooksView(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BooksSerializer
+
+
+class DetailedBookView(generics.RetrieveAPIView):
+
+    queryset = Book.objects.all()
+    serializer_class = BooksSerializer
 
 
 class BookRemoveView(DeleteView):
@@ -77,13 +90,9 @@ def edit_book_view(request, identifier: str):
 
 
 def create_book_view(request):
-    form_b = BookCreateForm()
-    form_d = DateEditForm()
-    form_a = AuthorEditForm()
+    form_b, form_d, form_a = BookCreateForm(), DateEditForm(), AuthorEditForm()
     if request.method == 'POST':
-        form_b = BookCreateForm(request.POST)
-        form_d = DateEditForm(request.POST)
-        form_a = AuthorEditForm(request.POST)
+        form_b, form_d, form_a = BookCreateForm(request.POST), DateEditForm(request.POST), AuthorEditForm(request.POST)
         if form_b.is_valid() and form_d.is_valid() and form_a.is_valid():
             date_object = form_d.save()
             book_object = form_b.save()
