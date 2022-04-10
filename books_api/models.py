@@ -44,14 +44,14 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    id = models.CharField(max_length=200, primary_key=True, verbose_name='ID')
-    title = models.CharField(max_length=200, blank=True)
+    id = models.CharField(max_length=50, primary_key=True, verbose_name='ID')
+    title = models.CharField(max_length=250, blank=True)
     pub_date = models.ForeignKey(Date, on_delete=models.SET_NULL, blank=True, null=True)
     ISBN_10 = models.CharField(max_length=200, blank=True, null=True)
     ISBN_13 = models.CharField(max_length=200, blank=True, null=True)
-    pages_number = models.IntegerField(blank=True, null=True)
+    pages_number = models.PositiveIntegerField(blank=True, null=True)
     image = models.URLField(max_length=250, blank=True, null=True)
-    language = models.CharField(max_length=100, blank=True, null=True)
+    language = models.CharField(max_length=50, blank=True, null=True)
     authors = models.ManyToManyField(Author, related_name='books', blank=True)
 
     def __str__(self):
