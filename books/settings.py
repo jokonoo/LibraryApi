@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'books_api.apps.BooksApiConfig',
 
     'rest_framework',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
