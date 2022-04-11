@@ -70,7 +70,7 @@ class Book(models.Model):
     def get_languages_list():
         languages = list(Book.objects.values_list('language', flat=True).distinct())
         if len(languages) > 1:
-            return [language for language in languages]
+            return [language for language in languages if language]
         else:
             return languages
 

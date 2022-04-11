@@ -29,10 +29,10 @@
                     Image URL: {{book.image|default:"Missing data"}}
                 </li>
             </ul>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <a href="books_view" class="btn btn-primary">Go back</a>
         </div>
         <div class="card-footer text-muted">
-            2 days ago
+            {{book.pub_date.get_full_date}}
         </div>
     </div>
 </div>

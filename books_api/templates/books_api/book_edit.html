@@ -31,7 +31,9 @@
                     {% endfor %}
                 </div>
                 <div>
-                    <button class="btn btn-primary" type="submit">Create Book</button>
+                    {% block button %}
+                    <button class="btn btn-primary" type="submit">Edit Book</button>
+                    {% endblock button %}
                 </div>
             </form>
         </div>
