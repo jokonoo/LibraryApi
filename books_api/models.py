@@ -53,6 +53,9 @@ class Book(models.Model):
     language = models.CharField(max_length=50, blank=True, null=True)
     authors = models.ManyToManyField(Author, related_name='books', blank=True)
 
+    class Meta:
+        ordering = ('title',)
+
     def __str__(self):
         return f'ID:{self.id}, Title:{self.title}'
 
@@ -66,5 +69,6 @@ class Book(models.Model):
     @staticmethod
     def get_languages_list():
         languages = list(Book.objects.values_list('language').distinct())
+        print(languages)
         return [language[0] for language in languages]
 

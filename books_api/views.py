@@ -1,9 +1,9 @@
 from datetime import date
 
-from django.shortcuts import render, reverse, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
@@ -11,11 +11,11 @@ from rest_framework import generics
 from rest_framework import filters as rest_filters
 from django_filters import rest_framework as filters
 
-from .serializers import BooksSerializer
 from .api_scraper import api_data_scraper
-from .models import Book, Date, Author
-from .forms import BookEditForm, BookCreateForm, DateEditForm, AuthorEditForm
 from .filters import BookFilter
+from .forms import BookEditForm, BookCreateForm, DateEditForm, AuthorEditForm
+from .models import Book, Date, Author
+from .serializers import BooksSerializer
 
 
 class BooksView(generics.ListAPIView):
@@ -59,9 +59,15 @@ def main_page_view(request):
             date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__lte=date(*date_to))
         books = Book.objects.filter(q).distinct()
-        context = {'books': books, 'q': params, 'languages': Book.get_languages_list()}
+        paginator = Paginator(books, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {'page': page_obj, 'q': params, 'languages': Book.get_languages_list()}
     else:
-        context = {'books': Book.objects.all(), 'languages': Book.get_languages_list()}
+        paginator = Paginator(Book.objects.all(), 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {'page': page_obj, 'languages': Book.get_languages_list()}
     return render(request, 'books_api/main.html', context)
 
 
@@ -86,12 +92,12 @@ def edit_book_view(request, identifier: str):
                     author_object, created = Author.objects.get_or_create(name=author.strip())
                     book_object.authors.add(author_object)
             return redirect('books_view')
-        return render(request, 'books_api/test_edit.html',
+        return render(request, 'books_api/book_edit.html',
                       {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
     form_b = BookEditForm(instance=book)
     form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
     form_a = AuthorEditForm(instance=book)
-    return render(request, 'books_api/test_edit.html',
+    return render(request, 'books_api/book_edit.html',
                   {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
 
 
@@ -112,6 +118,7 @@ def create_book_view(request):
                     author_object, created = Author.objects.get_or_create(name=author.strip())
                     book_object.authors.add(author_object)
             book_object.save()
+            return redirect('books_view')
         return render(request, 'books_api/book_add.html',
                       {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
 
