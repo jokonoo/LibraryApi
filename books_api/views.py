@@ -40,7 +40,10 @@ class BookRemoveView(DeleteView):
 
 def main_page_view(request):
     if params := request.POST:
-        q = Q(title__icontains=params.get('q')) | Q(authors__name__icontains=params.get('q'))
+        if params.get('q'):
+            q = Q(title__icontains=params.get('q')) | Q(authors__name__icontains=params.get('q'))
+        else:
+            q = Q()
         if lang := request.POST.getlist('language'):
             if len(lang) > 1:
                 for language in lang:
@@ -58,13 +61,13 @@ def main_page_view(request):
         elif date_to:
             date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__lte=date(*date_to))
-        books = Book.objects.filter(q).distinct()
+        books = Book.objects.filter(q).distinct().order_by('title')
         paginator = Paginator(books, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context = {'page': page_obj, 'q': params, 'languages': Book.get_languages_list()}
     else:
-        paginator = Paginator(Book.objects.all(), 10)
+        paginator = Paginator(Book.objects.all().order_by('title'), 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context = {'page': page_obj, 'languages': Book.get_languages_list()}

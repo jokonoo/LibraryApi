@@ -93,9 +93,9 @@ class BookModelTest(TestCase):
         max_length = book._meta.get_field('language').max_length
         self.assertEqual(max_length, 50)
 
-    def test_str_name_is_id_comma_title(self):
+    def test_str_name_is_id_comma_title_coma_date(self):
         book = Book.objects.get(id='TEST')
-        expected_book_name = f'ID:{book.id}, Title:{book.title}'
+        expected_book_name = f'ID:{book.id}, Title:{book.title}, Date: {book.pub_date}'
         self.assertEqual(str(book), expected_book_name)
 
     def test_get_absolute_url(self):

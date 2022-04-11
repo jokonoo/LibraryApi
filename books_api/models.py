@@ -16,6 +16,9 @@ class Date(models.Model):
             MinValueValidator(1)])
     searching_date = models.DateField(blank=True, null=True)
 
+    #class Meta:
+    #    unique_together = ('year', 'month', 'day')
+
     def clean(self):
         super().clean()
         if self.day and not self.month:
@@ -53,11 +56,8 @@ class Book(models.Model):
     language = models.CharField(max_length=50, blank=True, null=True)
     authors = models.ManyToManyField(Author, related_name='books', blank=True)
 
-    class Meta:
-        ordering = ('title',)
-
     def __str__(self):
-        return f'ID:{self.id}, Title:{self.title}'
+        return f'ID:{self.id}, Title:{self.title}, Date: {self.pub_date}'
 
     def get_authors_names(self):
         if authors := self.authors.all():
@@ -68,7 +68,9 @@ class Book(models.Model):
 
     @staticmethod
     def get_languages_list():
-        languages = list(Book.objects.values_list('language').distinct())
-        print(languages)
-        return [language[0] for language in languages]
+        languages = list(Book.objects.values_list('language', flat=True).distinct())
+        if len(languages) > 1:
+            return [language for language in languages]
+        else:
+            return languages
 
