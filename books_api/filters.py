@@ -4,7 +4,7 @@ from .models import Book, Author
 
 
 class BookFilter(filters.FilterSet):
-    LANGUAGE_CHOICES = [(value, value) for value in Book.objects.values_list('language', flat=True).distinct()]
+    LANGUAGE_CHOICES = [(value, value) for value in Book.objects.values_list('language', flat=True).distinct() if value]
     title = filters.CharFilter(lookup_expr='icontains')
     author = filters.CharFilter(field_name='authors__name', lookup_expr='icontains')
     pub_date = filters.DateFromToRangeFilter(field_name='pub_date__searching_date')

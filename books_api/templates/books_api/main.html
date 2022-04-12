@@ -78,7 +78,12 @@
                                 <strong>Pages:</strong> {{book.pages_number|default:"Missing data"}}
                             </li>
                             <li class="list-group-item">
-                                <strong>Language:</strong> {{book.language|upper|default:"Missing data"}}
+                                <strong>Language:</strong>
+                                {% if book.language %}
+                                {{book.language|upper}}
+                                {% else %}
+                                Missing Data
+                                {% endif %}
                             </li>
                             <li class="list-group-item">
                                 <strong>ISBN 10:</strong> {{book.ISBN_10|default:"Missing data"}}
