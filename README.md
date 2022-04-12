@@ -5,7 +5,9 @@
 ### REST API DOCUMENTATION
 
 You can actually use query params to filter objects. After rest url (https://api-library-app.herokuapp.com/books/api/) You have to specify <strong>? character</strong> and then params of your choice. You can obviously mix it up but after every single param you have to put <strong>& character</strong>.
+
 ####Example:
+
 https://api-library-app.herokuapp.com/books/api/?search=hobbit
 
 ###Params list:
@@ -18,4 +20,5 @@ https://api-library-app.herokuapp.com/books/api/?search=hobbit
 <li><strong>languages</strong> - used to look for languages. It can be also used more than once.
 
 ##Live site:
+
 https://api-library-app.herokuapp.com/
