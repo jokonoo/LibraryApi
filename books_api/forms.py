@@ -55,7 +55,6 @@ class AuthorEditForm(forms.ModelForm):
 
 
 class DateEditForm(forms.ModelForm):
-
     class Meta:
         model = Date
         exclude = ('searching_date',)

@@ -7,10 +7,10 @@ from books_api.models import Book, Date, Author
 
 
 class MainPageBooksListViewTest(TestCase):
+
     @classmethod
     def setUpTestData(cls):
         number_of_books = 15
-
         for author_id in range(number_of_books):
             if author_id % 2 == 0:
                 Book.objects.create(title='hobbit', id=author_id, language='en')

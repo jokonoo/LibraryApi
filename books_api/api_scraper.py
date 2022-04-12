@@ -1,10 +1,9 @@
 from itertools import zip_longest
-
 import requests
 
+from django.core.exceptions import MultipleObjectsReturned
 from django.db import DataError
 from django.db.models import Q
-from django.core.exceptions import MultipleObjectsReturned
 
 from .models import Date, Book, Author
 

@@ -2,14 +2,14 @@ from datetime import date
 
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django_filters import rest_framework as filters
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView
-from django.urls import reverse_lazy
-from rest_framework import generics
 from rest_framework import filters as rest_filters
-from django_filters import rest_framework as filters
+from rest_framework import generics
 
 from .api_scraper import api_data_scraper
 from .filters import BookFilter
@@ -27,7 +27,6 @@ class BooksView(generics.ListAPIView):
 
 
 class DetailedBookView(generics.RetrieveAPIView):
-
     queryset = Book.objects.all()
     serializer_class = BooksSerializer
 

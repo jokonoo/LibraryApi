@@ -16,9 +16,6 @@ class Date(models.Model):
             MinValueValidator(1)])
     searching_date = models.DateField(blank=True, null=True)
 
-    #class Meta:
-    #    unique_together = ('year', 'month', 'day')
-
     def clean(self):
         super().clean()
         if self.day and not self.month:
