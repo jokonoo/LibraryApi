@@ -10,7 +10,7 @@ You can actually use query params to filter objects. After rest url (https://api
 
 https://api-library-app.herokuapp.com/books/api/?search=hobbit
 
-###Params list:
+### Params list:
 <li><strong>search</strong> - used to query any word in title, author name and language</li>
 <li><strong>title</strong> - used to search any word that any title will contain
 <li><strong>pub_date_after</strong> - minimal range of date. You have to provide actual date here like <strong>pub_date_after=2010-01-01</strong>
@@ -19,6 +19,6 @@ https://api-library-app.herokuapp.com/books/api/?search=hobbit
 <li><strong>authors</strong> - used to look for direct authors. Important thing is that You have to put <strong>+ character</strong> instead of spaces. You can look for more than just one author. To do this, You have to put <strong>& character</strong> and then specify authors param again like that: <strong>authors=John+Ronald+Reuel+Tolkien&authors=J.+R.+R.+Tolkien</strong>
 <li><strong>languages</strong> - used to look for languages. It can be also used more than once.
 
-##Live site:
+## Live site:
 
 https://api-library-app.herokuapp.com/
