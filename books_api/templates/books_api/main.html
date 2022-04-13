@@ -27,8 +27,7 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'api_view' %}"><strong>REST API</strong></a>
                 </li>
             </ul>
-            <form class="d-flex" method="POST" action="{% url 'books_view' %}">
-                {% csrf_token %}
+            <form class="d-flex" method="GET" action="{% url 'books_view' %}">
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -115,12 +114,12 @@
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             {% if page.paginator.num_pages != 1 %}
-            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="?{% if query %}{{query}}&page=1{% else %}page=1{% endif %}">First</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link" href="#">First</a></li>
             {% endif %}
             {% if page.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?{% if query %}{{query}}&page={{ page.previous_page_number }}{% else %}page={{ page.previous_page_number }}{% endif %}">&laquo;</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
             {% endif %}
@@ -129,16 +128,16 @@
             <li class="page-item active"><a class="page-link" href="#">{{ i }} <span
                     class="sr-only">(current)</span></a></li>
             {% elif page.number > i|add:"-5" and page.number < i|add:"+5"%}
-            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            <li class="page-item"><a class="page-link" href="?{% if query %}{{query}}&page={{ i }}{% else %}page={{ i }}{% endif %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
             {% if page.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">&raquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?{% if query %}{{query}}&page={{ page.next_page_number }}{% else %}page={{ page.next_page_number }}{% endif %}">&raquo;</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
             {% endif %}
             {% if page.paginator.num_pages != page.number %}
-            <li class="page-item"><a class="page-link" href="?page={{ page.paginator.num_pages }}">Last</a></li>
+            <li class="page-item"><a class="page-link" href="?{% if query %}{{query}}&page={{ page.paginator.num_pages }}{% else %}page={{ page.paginator.num_pages }}{% endif %}">Last</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link" href="#">Last</a></li>
             {% endif %}

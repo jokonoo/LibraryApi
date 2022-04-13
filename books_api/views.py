@@ -38,38 +38,48 @@ class BookRemoveView(DeleteView):
 
 
 def main_page_view(request):
-    if params := request.POST:
-        if params.get('q'):
+    q = Q()
+    query = []
+    if params := request.GET:
+        if q := params.get('q'):
+            query.append(f'q={q}')
             q = Q(title__icontains=params.get('q')) | Q(authors__name__icontains=params.get('q'))
-        else:
-            q = Q()
-        if lang := request.POST.getlist('language'):
+        if lang := request.GET.getlist('language'):
             if len(lang) > 1:
                 for language in lang:
+                    query.append(f'language={language}')
                     q |= Q(language__exact=language)
             else:
+                query.append(f'language={lang[0]}')
                 q &= Q(language__exact=lang[0])
         date_from, date_to = params.get('date_from'), params.get('date_to')
         if date_from and date_to:
+            query.append(f'date_from={date_from}&date_to={date_to}')
             date_from = list(map(int, date_from.split('-')))
             date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
         elif date_from:
+            query.append(f'date_from={date_from}')
             date_from = list(map(int, date_from.split('-')))
             q &= Q(pub_date__searching_date__gte=date(*date_from))
         elif date_to:
+            query.append(f'date_to={date_to}')
             date_to = list(map(int, date_to.split('-')))
             q &= Q(pub_date__searching_date__lte=date(*date_to))
+    if q:
         books = Book.objects.filter(q).distinct().order_by('title')
-        paginator = Paginator(books, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context = {'page': page_obj, 'q': params, 'languages': Book.get_languages_list()}
     else:
-        paginator = Paginator(Book.objects.all().order_by('title'), 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context = {'page': page_obj, 'languages': Book.get_languages_list()}
+        books = Book.objects.all().order_by('title')
+    paginator = Paginator(books, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    context = {'page': page_obj, 'languages': Book.get_languages_list()}
+    if query:
+        if len(query) == 1:
+            query = query[0]
+        else:
+            query = '&'.join(query)
+        context['query'] = query
     return render(request, 'books_api/main.html', context)
 
 
