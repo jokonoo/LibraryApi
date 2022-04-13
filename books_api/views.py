@@ -60,15 +60,25 @@ def main_page_view(request):
             query.append(f'date_from={date_from}&date_to={date_to}')
             date_from = list(map(int, date_from.split('-')))
             date_to = list(map(int, date_to.split('-')))
-            q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
+            if q:
+                q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
+            else:
+                q = Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
+
         elif date_from:
             query.append(f'date_from={date_from}')
             date_from = list(map(int, date_from.split('-')))
-            q &= Q(pub_date__searching_date__gte=date(*date_from))
+            if q:
+                q &= Q(pub_date__searching_date__gte=date(*date_from))
+            else:
+                q = Q(pub_date__searching_date__gte=date(*date_from))
         elif date_to:
             query.append(f'date_to={date_to}')
             date_to = list(map(int, date_to.split('-')))
-            q &= Q(pub_date__searching_date__lte=date(*date_to))
+            if q:
+                q &= Q(pub_date__searching_date__lte=date(*date_to))
+            else:
+                q = Q(pub_date__searching_date__lte=date(*date_to))
     if q:
         books = Book.objects.filter(q).distinct().order_by('title')
     else:
