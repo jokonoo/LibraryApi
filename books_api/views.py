@@ -51,7 +51,10 @@ def main_page_view(request):
                     q |= Q(language__exact=language)
             else:
                 query.append(f'language={lang[0]}')
-                q &= Q(language__exact=lang[0])
+                if q:
+                    q &= Q(language__exact=lang[0])
+                else:
+                    q = Q(language__exact=lang[0])
         date_from, date_to = params.get('date_from'), params.get('date_to')
         if date_from and date_to:
             query.append(f'date_from={date_from}&date_to={date_to}')
