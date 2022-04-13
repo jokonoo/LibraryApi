@@ -49,12 +49,12 @@ class MainPageBooksListViewTest(TestCase):
 
     def test_form_get_right_books(self):
         books = list(Book.objects.filter(title__icontains='hobbit'))
-        response = self.client.post(reverse('books_view'), data={'q': 'hobbit'})
+        response = self.client.get('/books/?q=hobbit')
         self.assertEqual(books, response.context['page'].object_list)
 
-    def test_form_get_right_books(self):
+    def test_form_get_right_books2(self):
         books = list(Book.objects.filter(title__icontains='potter'))
-        response = self.client.post(reverse('books_view'), data={'q': 'potter'})
+        response = self.client.post('/books/?q=potter')
         self.assertEqual(books, response.context['page'].object_list)
 
 
