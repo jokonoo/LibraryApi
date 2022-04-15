@@ -102,9 +102,13 @@ def detail_book_view(request: HttpRequest, identifier: str) -> HttpResponse:
 
 def edit_book_view(request, identifier: str):
     book = get_object_or_404(Book, id=identifier)
+    date_obj = Date.objects.filter(book__id__exact=book.id)
     if request.method == 'POST':
         form_b = BookEditForm(request.POST, instance=book)
-        form_d = DateEditForm(request.POST, instance=Date.objects.filter(book__id__exact=book.id)[0])
+        if date_obj:
+            form_d = DateEditForm(request.POST, instance=date_obj[0])
+        else:
+            form_d = DateEditForm(request.POST)
         form_a = AuthorEditForm(request.POST, instance=book)
         if form_b.is_valid() and form_d.is_valid() and form_a.is_valid():
             book_object = form_b.save()
@@ -119,7 +123,10 @@ def edit_book_view(request, identifier: str):
         return render(request, 'books_api/book_edit.html',
                       {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})
     form_b = BookEditForm(instance=book)
-    form_d = DateEditForm(instance=Date.objects.filter(book__id__exact=book.id)[0])
+    if date_obj:
+        form_d = DateEditForm(instance=date_obj[0])
+    else:
+        form_d = DateEditForm()
     form_a = AuthorEditForm(instance=book)
     return render(request, 'books_api/book_edit.html',
                   {'form_b': form_b, 'form_d': form_d, 'form_a': form_a, 'languages': Book.get_languages_list()})

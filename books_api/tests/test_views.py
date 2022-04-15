@@ -127,7 +127,9 @@ class SavingImportedDatesTest(TestCase):
         r = requests.get(f'https://www.googleapis.com/books/v1/volumes/?q=hobbit').json()
         for item in r.get('items'):
             pub_object = [str(author) for author in Book.objects.get(id=str(item.get('id'))).authors.all()]
-            self.assertEqual(item.get('volumeInfo').get('authors'), pub_object if pub_object else None)
+            authors_data = item.get('volumeInfo').get('authors')
+            authors_data = sorted(authors_data if authors_data else [], key=lambda x: x[0])
+            self.assertEqual(authors_data, pub_object if pub_object else [])
 
     def test_checking_correct_authors2(self):
         response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'something'})
@@ -135,7 +137,9 @@ class SavingImportedDatesTest(TestCase):
         r = requests.get(f'https://www.googleapis.com/books/v1/volumes/?q=something').json()
         for item in r.get('items'):
             pub_object = [str(author) for author in Book.objects.get(id=str(item.get('id'))).authors.all()]
-            self.assertEqual(item.get('volumeInfo').get('authors'), pub_object if pub_object else None)
+            authors_data = item.get('volumeInfo').get('authors')
+            authors_data = sorted(authors_data if authors_data else [], key=lambda x: x[0])
+            self.assertEqual(authors_data, pub_object if pub_object else [])
 
 
 class EditBookViewTest(TestCase):
@@ -169,6 +173,25 @@ class EditBookViewTest(TestCase):
         response = self.client.get(
             reverse('edit_book_view', kwargs={'identifier': 'NotExistingID'}))
         self.assertEqual(response.status_code, 404)
+
+    def data_loading_correctly(self):
+        Book.objects.create(id='testing12345', title='testing12345')
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'hobbit'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'potter'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'metro'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': '1'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'x'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': '?'})
+        self.assertEqual(response.status_code, 302)
+        for item in Book.objects.all():
+            response = self.client.get(
+                reverse('edit_book_view', kwargs={'identifier': item.id}))
+            self.assertEqual(response.status_code, 200)
 
     def test_view_book_form_fields_initial(self):
         book_object = Book.objects.get(id='testing123')
@@ -324,3 +347,22 @@ class DetailBookViewTest(TestCase):
         response = self.client.get(
             reverse('books_detail_view', kwargs={'identifier': 'NotExistingID'}))
         self.assertEqual(response.status_code, 404)
+
+    def test_view_data_loading_correctly(self):
+        Book.objects.create(id='testing12345', title='testing12345')
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'hobbit'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'potter'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'metro'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': '1'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': 'x'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('book_import_form_view'), data={'?q=': '?'})
+        self.assertEqual(response.status_code, 302)
+        for item in Book.objects.all():
+            response = self.client.get(
+                reverse('books_detail_view', kwargs={'identifier': item.id}))
+            self.assertEqual(response.status_code, 200)
