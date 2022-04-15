@@ -15,6 +15,7 @@ def api_data_scraper(values):
         if value:
             url += f'{key}{value}'
     r = requests.get(url).json()
+
     if r.get('items'):
         for item in r.get('items'):
             try:
@@ -22,7 +23,8 @@ def api_data_scraper(values):
                 book_obj, created = Book.objects.update_or_create(
                     id=item.get('id'), defaults={
                         'id': item.get('id'),
-                        'title': volume_data.get('title'),
+                        'title': volume_data.get('title').strip if volume_data.get('title') else volume_data.get(
+                            'title'),
                         'pages_number': volume_data.get('pageCount'),
                         'language': volume_data.get('language')
                     })
@@ -35,32 +37,35 @@ def api_data_scraper(values):
                         book_obj.authors.add(author_obj)
 
                 if pub_date := volume_data.get('publishedDate'):
-                    dates = ['year', 'month', 'day']
-                    pub_date = list(map(int, pub_date.split('-')))
-                    pub_date_dict_alt = dict(zip_longest(dates, pub_date))
                     try:
-                        if not all(value for value in pub_date_dict_alt.values()):
-                            raise MultipleObjectsReturned
-                        pub_date_dict = dict(zip(dates, pub_date))
-                        date_obj, created = Date.objects.get_or_create(**pub_date_dict)
-                        book_obj.pub_date = date_obj
-                        book_obj.save()
-                    except MultipleObjectsReturned:
-                        pub_date_dict = dict(zip(dates, pub_date))
-                        q = Q()
-                        for key, value in pub_date_dict_alt.items():
-                            if value:
-                                q &= Q(**{key: value})
+                        dates = ['year', 'month', 'day']
+                        pub_date = list(map(int, pub_date.split('-')))
+                        pub_date_dict_alt = dict(zip_longest(dates, pub_date))
+                        try:
+                            if not all(value for value in pub_date_dict_alt.values()):
+                                raise MultipleObjectsReturned
+                            pub_date_dict = dict(zip(dates, pub_date))
+                            date_obj, created = Date.objects.get_or_create(**pub_date_dict)
+                            book_obj.pub_date = date_obj
+                            book_obj.save()
+                        except MultipleObjectsReturned:
+                            pub_date_dict = dict(zip(dates, pub_date))
+                            q = Q()
+                            for key, value in pub_date_dict_alt.items():
+                                if value:
+                                    q &= Q(**{key: value})
+                                else:
+                                    q &= Q(**{f'{key}__isnull': True})
+                            if date_object := Date.objects.filter(q):
+                                date_obj = date_object[0]
+                                book_obj.pub_date = date_obj
+                                book_obj.save()
                             else:
-                                q &= Q(**{f'{key}__isnull': True})
-                        if date_object := Date.objects.filter(q):
-                            date_obj = date_object[0]
-                            book_obj.pub_date = date_obj
-                            book_obj.save()
-                        else:
-                            date_obj = Date.objects.create(**pub_date_dict)
-                            book_obj.pub_date = date_obj
-                            book_obj.save()
+                                date_obj = Date.objects.create(**pub_date_dict)
+                                book_obj.pub_date = date_obj
+                                book_obj.save()
+                    except ValueError:
+                        pass
 
                 if identifiers := volume_data.get('industryIdentifiers'):
                     for identifier in identifiers:

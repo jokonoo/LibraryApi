@@ -24,6 +24,7 @@
                            name="authorInput">
                     <small id="authorInputHelp" class="form-text text-muted">Input author names after comas</small>
                 </div>
+                {{ form_d.non_field_errors }}
                 {% for field in form_d %}
                 <div class="form-group">
                     {{field.errors}}

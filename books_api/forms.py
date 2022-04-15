@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from .models import Book, Date
 
@@ -23,6 +24,13 @@ class BookEditForm(forms.ModelForm):
                 attrs={'type': 'text', 'class': 'form-control', 'id': 'language'}),
         }
 
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if not title:
+            raise ValidationError(
+                "You have to set Title field")
+        return title
+
 
 class BookCreateForm(forms.ModelForm):
     class Meta:
@@ -45,6 +53,13 @@ class BookCreateForm(forms.ModelForm):
             'language': forms.TextInput(
                 attrs={'type': 'text', 'class': 'form-control', 'id': 'language'}),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if not title:
+            raise ValidationError(
+                "You have to set Title field")
+        return title
 
 
 class AuthorEditForm(forms.ModelForm):
@@ -69,3 +84,13 @@ class DateEditForm(forms.ModelForm):
                 attrs={'type': 'number', 'class': 'form-control', 'id': 'day',
                        'placeholder': 'Enter day'})
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        month = cleaned_data['month']
+        day = cleaned_data['day']
+        if day and (not month and month != 0):
+            if day <= 0 or day > 31:
+                raise ValidationError(
+                    "Can't set day, without month, and day must be value greater than 0 and lower than 31")
+            raise ValidationError("Can't set day, without month")

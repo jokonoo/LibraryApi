@@ -1,25 +1,19 @@
 from datetime import date
 
-from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import reverse
 
 
 class Date(models.Model):
-    year = models.PositiveIntegerField()
-    month = models.PositiveIntegerField(blank=True, null=True, validators=[
+    year = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    month = models.IntegerField(blank=True, null=True, validators=[
             MaxValueValidator(12),
             MinValueValidator(1)])
-    day = models.PositiveIntegerField(blank=True, null=True, validators=[
+    day = models.IntegerField(blank=True, null=True, validators=[
             MaxValueValidator(31),
             MinValueValidator(1)])
     searching_date = models.DateField(blank=True, null=True)
-
-    def clean(self):
-        super().clean()
-        if self.day and not self.month:
-            raise ValidationError('You cant set day without month')
 
     def save(self, *args, **kwargs):
         self.searching_date = date(self.year, self.month or 1, self.day or 1)

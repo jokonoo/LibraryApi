@@ -38,8 +38,8 @@ class BookRemoveView(DeleteView):
 
 
 def main_page_view(request):
-    q = Q()
     query = []
+    q = Q()
     if params := request.GET:
         if q := params.get('q'):
             query.append(f'q={q}')
@@ -64,7 +64,6 @@ def main_page_view(request):
                 q &= Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
             else:
                 q = Q(pub_date__searching_date__gte=date(*date_from)) & Q(pub_date__searching_date__lte=date(*date_to))
-
         elif date_from:
             query.append(f'date_from={date_from}')
             date_from = list(map(int, date_from.split('-')))

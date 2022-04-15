@@ -6,8 +6,11 @@
             Book details
         </div>
         <div class="card-body">
-            <h5 class="card-title">{{book.title}}</h5>
+            <h5 class="card-title">{{book.title|default:"Missing Data"}}</h5>
             <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    ID: {{book.id}}
+                </li>
                 <li class="list-group-item">
                     {% with authors=book.get_authors_names %}
                     Authors: {{ authors|join:", " }}
@@ -29,7 +32,7 @@
                     Image URL: {{book.image|default:"Missing data"}}
                 </li>
             </ul>
-            <a href="books_view" class="btn btn-primary">Go back</a>
+            <a href="{% url 'books_view' %}" class="btn btn-primary">Go back</a>
         </div>
         <div class="card-footer text-muted">
             {{book.pub_date.get_full_date}}
